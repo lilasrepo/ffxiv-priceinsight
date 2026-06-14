@@ -40,6 +40,8 @@ public class Configuration : IPluginConfiguration {
 
     public bool ShowBothNqAndHq { get; set; } = true;
 
+    public uint UniversalisWorldIdOverride { get; set; } = 0;
+
     [JsonExtensionData]
     public Dictionary<string, object> AdditionalData { get; set; } = new();
 

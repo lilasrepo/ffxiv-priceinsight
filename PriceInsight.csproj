@@ -1,25 +1,77 @@
-﻿<Project Sdk="Dalamud.NET.Sdk/15.0.0">
-	<!-- Assembly Configuration -->
-	<PropertyGroup>
-		<AssemblyName>PriceInsight</AssemblyName>
-		<Version>2.11.5.0</Version>
-	</PropertyGroup>
+<?xml version="1.0" encoding="utf-8"?>
+<Project Sdk="Microsoft.NET.Sdk">
 
-	<!-- NuGet Packages -->
-	<ItemGroup>
-		<PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
-	</ItemGroup>
+    <PropertyGroup>
+        <Authors>Kouzukii</Authors>
+        <AssemblyName>PriceInsight</AssemblyName>
+        <Version>2.11.5.0</Version>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
 
-	<ItemGroup>
-	  <Folder Include="images" />
-	</ItemGroup>
+    <PropertyGroup>
+        <TargetFramework>net9.0-windows</TargetFramework>
+        <Platforms>x64</Platforms>
+        <LangVersion>preview</LangVersion>
+        <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+        <ProduceReferenceAssembly>false</ProduceReferenceAssembly>
+        <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <AppendPlatformToOutputPath>false</AppendPlatformToOutputPath>
+        <OutputPath>bin\$(Configuration)\</OutputPath>
+        <NoWarn>CS1591</NoWarn>
+    </PropertyGroup>
 
-	<ItemGroup>
-		<Content Include="images\icon.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-		<Content Include="images\image1.png">
-			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-		</Content>
-	</ItemGroup>
+    <PropertyGroup>
+        <DalamudLibPath>$(MSBuildThisFileDirectory)..\..\TC_ok\_dalamud_api12\</DalamudLibPath>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <PackageReference Include="DalamudPackager" Version="2.1.13" />
+        <PackageReference Include="EasyCaching.InMemory" Version="1.9.2" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <Reference Include="Dalamud">
+            <HintPath>$(DalamudLibPath)Dalamud.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="ImGui.NET">
+            <HintPath>$(DalamudLibPath)ImGui.NET.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Lumina">
+            <HintPath>$(DalamudLibPath)Lumina.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Lumina.Excel">
+            <HintPath>$(DalamudLibPath)Lumina.Excel.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="FFXIVClientStructs">
+            <HintPath>$(DalamudLibPath)FFXIVClientStructs.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="InteropGenerator.Runtime">
+            <HintPath>$(DalamudLibPath)InteropGenerator.Runtime.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Newtonsoft.Json">
+            <HintPath>$(DalamudLibPath)Newtonsoft.Json.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+        <Reference Include="Serilog">
+            <HintPath>$(DalamudLibPath)Serilog.dll</HintPath>
+            <Private>False</Private>
+        </Reference>
+    </ItemGroup>
+
+    <ItemGroup>
+        <Content Include="images\icon.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+        <Content Include="images\image1.png">
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+        </Content>
+    </ItemGroup>
+
 </Project>

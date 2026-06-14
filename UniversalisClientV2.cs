@@ -15,8 +15,8 @@ namespace PriceInsight;
 
 public class UniversalisClientV2 : IDisposable {
     private static readonly Dictionary<uint, string> Regions = new() { { 1, "Japan" }, { 2, "North-America" }, { 3, "Europe" }, { 4, "Oceania" } };
-    internal static readonly Dictionary<uint, (string Name, string DcName, string Region)> WorldLookup = Service.DataManager.GetExcelSheet<World>()
-        .ToDictionary(w => w.RowId, w => (w.Name.ExtractText(), w.DataCenter.Value.Name.ExtractText(), Regions.GetValueOrDefault(w.DataCenter.Value.Region.RowId) ?? "unknown"));
+    internal static readonly Dictionary<uint, (string Name, string DcName, string Region)> WorldLookup = Service.DataManager.GetExcelSheet<World>()!
+        .ToDictionary(w => w.RowId, w => (w.Name.ExtractText(), w.DataCenter.Value.Name.ExtractText(), Regions.GetValueOrDefault((uint)w.DataCenter.Value.Region) ?? "unknown"));
 
     private readonly HappyEyeballsCallback happyEyeballsCallback;
     private readonly HttpClient httpClient;
@@ -54,6 +54,8 @@ public class UniversalisClientV2 : IDisposable {
             }
 
             return items;
+        } catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.BadRequest) {
+            throw; // propagate 400 — caller handles "world not tracked by Universalis"
         } catch (Exception ex) {
             Service.PluginLog.Error(ex, "Failed to retrieve data from Universalis for itemIds {0}.", itemId);
             return null;

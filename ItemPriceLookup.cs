@@ -2,6 +2,8 @@ using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
+using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using EasyCaching.InMemory;
@@ -17,6 +19,8 @@ public class ItemPriceLookup : IDisposable {
     private readonly PriceInsightPlugin plugin;
     private readonly CancellationTokenSource cancellationTokenSource = new();
     private uint? homeWorldId;
+    private bool worldUnsupported = false;
+    public bool WorldUnsupported => worldUnsupported;
 
     public ItemPriceLookup(PriceInsightPlugin plugin) {
         this.plugin = plugin;
@@ -26,11 +30,12 @@ public class ItemPriceLookup : IDisposable {
     }
 
     public bool CheckReady() {
-        if (!Service.PlayerState.IsLoaded) return false;
+        var lp = Service.ClientState.LocalPlayer;
+        if (lp == null) return false;
         if (plugin.Configuration.UseCurrentWorld) {
-            homeWorldId ??= Service.PlayerState.CurrentWorld.RowId;
+            homeWorldId ??= lp.CurrentWorld.RowId;
         } else {
-            homeWorldId ??= Service.PlayerState.HomeWorld.RowId;
+            homeWorldId ??= lp.HomeWorld.RowId;
         }
 
         return homeWorldId != null;
@@ -38,6 +43,8 @@ public class ItemPriceLookup : IDisposable {
 
     public (MarketBoardData? MarketBoardData, LookupState State) Get(ulong fullItemId, bool refresh) {
         if (!ToMarketableItemId(fullItemId, out var itemId))
+            return (null, LookupState.NonMarketable);
+        if (worldUnsupported && plugin.Configuration.UniversalisWorldIdOverride == 0)
             return (null, LookupState.NonMarketable);
 
         if (refresh) {
@@ -65,6 +72,7 @@ public class ItemPriceLookup : IDisposable {
     }
 
     public void Fetch(IEnumerable<uint> items) {
+        if (worldUnsupported && plugin.Configuration.UniversalisWorldIdOverride == 0) return;
         var itemSheet = Service.DataManager.Excel.GetSheet<Item>();
         foreach (var id in items) {
             if (!ToMarketableItemId(id, out var itemId, itemSheet))
@@ -110,8 +118,22 @@ public class ItemPriceLookup : IDisposable {
         async Task<Dictionary<uint, MarketBoardData>?> FetchItemTask() {
             if (!homeWorldId.HasValue)
                 return null;
+            var worldId = plugin.Configuration.UniversalisWorldIdOverride > 0
+                ? plugin.Configuration.UniversalisWorldIdOverride
+                : homeWorldId.Value;
             var fetchStart = DateTime.Now;
-            var result = await plugin.UniversalisClientV2.GetMarketBoardDataList(homeWorldId.Value, itemIds, token.Token);
+            Dictionary<uint, MarketBoardData>? result;
+            try {
+                result = await plugin.UniversalisClientV2.GetMarketBoardDataList(worldId, itemIds, token.Token);
+            } catch (HttpRequestException ex) when (ex.StatusCode == HttpStatusCode.BadRequest) {
+                if (!worldUnsupported) {
+                    Service.PluginLog.Warning(
+                        "World {0} is not tracked by Universalis (HTTP 400). Price data unavailable. " +
+                        "Set a world ID override in /priceinsight settings (e.g. 40 = Carbuncle JP).", worldId);
+                    worldUnsupported = true;
+                }
+                return null; // silent — no FetchFailed tooltip, no re-request
+            }
             if (result != null)
                 plugin.ItemPriceTooltip.Refresh(result);
             else

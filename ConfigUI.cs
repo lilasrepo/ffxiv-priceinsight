@@ -1,5 +1,6 @@
 using System;
-using Dalamud.Bindings.ImGui;
+using System.Numerics;
+using ImGuiNET;
 
 namespace PriceInsight;
 
@@ -98,7 +99,8 @@ internal class ConfigUI(PriceInsightPlugin plugin) : IDisposable {
             ImGui.Separator();
 
             var selectValue = conf.ShowDailySaleVelocityIn;
-            if (ImGui.Combo("Show sales per day", ref selectValue, ["Do not show", "World", "Datacenter", "Region"])) {
+            var velocityItems = new[] { "Do not show", "World", "Datacenter", "Region" };
+            if (ImGui.Combo("Show sales per day", ref selectValue, velocityItems, velocityItems.Length)) {
                 conf.ShowDailySaleVelocityIn = selectValue;
                 conf.Save();
             }
@@ -106,7 +108,8 @@ internal class ConfigUI(PriceInsightPlugin plugin) : IDisposable {
                 ImGui.SetTooltip("Show the average sales per day based on sales of the last 4 days.");
 
             selectValue = conf.ShowAverageSalePriceIn;
-            if (ImGui.Combo("Show average sale price", ref selectValue, ["Do not show", "World", "Datacenter", "Region"])) {
+            var avgPriceItems = new[] { "Do not show", "World", "Datacenter", "Region" };
+            if (ImGui.Combo("Show average sale price", ref selectValue, avgPriceItems, avgPriceItems.Length)) {
                 conf.ShowAverageSalePriceIn = selectValue;
                 conf.Save();
             }
@@ -144,6 +147,28 @@ internal class ConfigUI(PriceInsightPlugin plugin) : IDisposable {
             }
             if (ImGui.IsItemHovered())
                 ImGui.SetTooltip("Show the prices for both NQ and HQ of an item.\nWhen turned off will only display price for the current quality (use Ctrl to switch between NQ and HQ).");
+
+            ImGui.Separator();
+
+            if (plugin.ItemPriceLookup.WorldUnsupported && conf.UniversalisWorldIdOverride == 0) {
+                ImGui.TextColored(new Vector4(1f, 0.4f, 0.4f, 1f), "Your world is not tracked by Universalis.");
+                ImGui.TextWrapped("Set a world ID override below to view reference prices from that world.");
+            }
+
+            ImGui.SetNextItemWidth(120);
+            var worldOverride = (int)conf.UniversalisWorldIdOverride;
+            if (ImGui.InputInt("Universalis world ID override", ref worldOverride, 0, 0)) {
+                conf.UniversalisWorldIdOverride = worldOverride < 0 ? 0u : (uint)worldOverride;
+                conf.Save();
+                plugin.ClearCache();
+            }
+            if (ImGui.IsItemHovered())
+                ImGui.SetTooltip(
+                    "TC/private server players: Universalis only tracks international worlds.\n" +
+                    "Enter an international world ID to use its prices as reference.\n" +
+                    "Common Japan world IDs: Carbuncle=40, Garuda=44, Tonberry=68, Aegis=22\n" +
+                    "Find all IDs at: https://universalis.app/api/v2/worlds\n" +
+                    "Set to 0 to use your own home world (default).");
         }
 
         ImGui.End();
