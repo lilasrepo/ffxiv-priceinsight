@@ -1,11 +1,54 @@
-# FFXIV Price Insight
+# Price Insight（繁中移植版 · TC12） / Traditional-Chinese Port
 
-A price insight plugin for FFXIV Quick Launcher / Dalamud using the [Universalis API](https://universalis.app/)
+> 滑鼠移到物品上就看市場板價格！<br>
+> See marketboard prices on hover!
 
-Whenever you mouseover an item, it will show you the NQ/HQ marketboard prices at the bottom as well as the most recent purchase.
+**繁體中文**：這是 **[Price Insight](https://github.com/kouzukii/ffxiv-priceinsight)** 的繁體中文客戶端移植版，對應 **FFXIV 7.1 / yanmucorp Dalamud API12（.NET 9）**。本專案僅做相容性移植，**非官方、非原作維護**；所有原始功能與設計著作權歸原作者 **Kouzukii**。
 
-![preview](images/image1.png)
+**English**: A Traditional-Chinese-client port of **[Price Insight](https://github.com/kouzukii/ffxiv-priceinsight)** targeting **FFXIV 7.1 / yanmucorp Dalamud API12 (.NET 9)**. Compatibility port only — **unofficial and not maintained by the original author**. All original work © **Kouzukii**.
 
-## Installation
+---
 
-Available for install via [Dalamud](https://github.com/goatcorp/FFXIVQuickLauncher)'s built-in plugin installer.
+## 這是什麼 / About
+
+滑鼠移到任何物品上時，在下方顯示 NQ/HQ 的市場板價格與最近成交紀錄。價格來自 Universalis.app 並快取 90 分鐘；按住 Alt 可立即刷新。
+
+When you hover an item it shows NQ/HQ marketboard prices and the most recent sale at the bottom. Data comes from Universalis.app, cached for 90 minutes; hold Alt to refresh.
+
+## 安裝 / Installation
+
+**繁體中文**
+1. 使用 **XIVTCLauncher** 啟動繁體中文客戶端。
+2. 遊戲內輸入 `/xlsettings` → 切到 **Experimental** 分頁 → **Custom Plugin Repositories（自訂插件庫）**。
+3. 貼上下列網址並按 **+** 儲存：
+   ```
+   https://raw.githubusercontent.com/lilasrepo/DalamudPlugins/main/pluginmaster.json
+   ```
+4. 輸入 `/xlplugins`，搜尋 **Price Insight (TC12)** → 安裝 → 啟用。
+
+**English**
+1. Launch the Traditional-Chinese client with **XIVTCLauncher**.
+2. In-game, type `/xlsettings` → **Experimental** tab → **Custom Plugin Repositories**.
+3. Add this URL and save with **+**:
+   ```
+   https://raw.githubusercontent.com/lilasrepo/DalamudPlugins/main/pluginmaster.json
+   ```
+4. Type `/xlplugins`, search **Price Insight (TC12)** → Install → Enable.
+
+## 對應版本 / Compatibility
+
+| 項目 / Item | 版本 / Version |
+|---|---|
+| 遊戲 / Game | FFXIV 7.1（繁中客戶端 / TC client） |
+| Dalamud | yanmucorp API12（.NET 9） |
+| 移植自上游 / Ported from upstream | v2.11.5.0 |
+
+## 原作與授權 / Credits & License
+
+本專案 fork 自 **[kouzukii/ffxiv-priceinsight](https://github.com/kouzukii/ffxiv-priceinsight)**，授權沿用上游；所有原始功能著作權歸 **Kouzukii**。<br>
+Forked from **[kouzukii/ffxiv-priceinsight](https://github.com/kouzukii/ffxiv-priceinsight)**. License follows upstream; all original work © **Kouzukii**.
+
+## 免責聲明 / Disclaimer
+
+第三方插件，使用風險自負。**移植相關問題請回報到本 repo 的 Issues，請勿打擾上游原作者。**<br>
+Third-party plugin — use at your own risk. **For port-specific issues please open an Issue here; do not contact the upstream author.**
