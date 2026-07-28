@@ -1,6 +1,6 @@
 name: Price Insight
 author: Kouzukii
-dalamud_api_level: 12
+dalamud_api_level: 13
 punchline: See item marketboard prices on hover!
 description: |
   Whenever you mouseover an item, it will show you the NQ/HQ marketboard prices at the bottom as well as the most recent purchase.

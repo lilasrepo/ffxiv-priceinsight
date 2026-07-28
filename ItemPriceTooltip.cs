@@ -78,7 +78,7 @@ public class ItemPriceTooltip(PriceInsightPlugin plugin) : IDisposable {
             priceNode->EdgeColor = baseNode->EdgeColor;
             priceNode->LineSpacing = 18;
             priceNode->FontSize = 12;
-            priceNode->TextFlags = (byte)(baseNode->TextFlags | (byte)(TextFlags.MultiLine | TextFlags.AutoAdjustNodeSize));
+            priceNode->TextFlags = baseNode->TextFlags | TextFlags.MultiLine | TextFlags.AutoAdjustNodeSize;
             var prev = insertNode->PrevSiblingNode;
             priceNode->AtkResNode.ParentNode = insertNode->ParentNode;
             insertNode->PrevSiblingNode = (AtkResNode*)priceNode;
@@ -322,7 +322,7 @@ public class ItemPriceTooltip(PriceInsightPlugin plugin) : IDisposable {
                 try {
                     var tooltip = Service.GameGui.GetAddonByName("ItemDetail");
                     unsafe {
-                        var atkBase = (AtkUnitBase*)tooltip;
+                        var atkBase = (AtkUnitBase*)tooltip.Address;
                         if (atkBase == null || !atkBase->IsVisible)
                             return;
                         RestoreToNormal(atkBase);
@@ -342,7 +342,7 @@ public class ItemPriceTooltip(PriceInsightPlugin plugin) : IDisposable {
             try {
                 var tooltip = Service.GameGui.GetAddonByName("ItemDetail");
                 unsafe {
-                    var atkBase = (AtkUnitBase*)tooltip;
+                    var atkBase = (AtkUnitBase*)tooltip.Address;
                     if (atkBase == null || !atkBase->IsVisible)
                         return;
                     RestoreToNormal(atkBase);
@@ -356,7 +356,7 @@ public class ItemPriceTooltip(PriceInsightPlugin plugin) : IDisposable {
 
     private void Cleanup() {
         unsafe {
-            var atkUnitBase = (AtkUnitBase*)Service.GameGui.GetAddonByName("ItemDetail");
+            var atkUnitBase = (AtkUnitBase*)Service.GameGui.GetAddonByName("ItemDetail").Address;
             if (atkUnitBase == null)
                 return;
 
