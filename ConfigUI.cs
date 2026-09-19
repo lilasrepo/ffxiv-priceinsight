@@ -150,9 +150,14 @@ internal class ConfigUI(PriceInsightPlugin plugin) : IDisposable {
 
             ImGui.Separator();
 
+            // porting-note(api13) MUST RE-APPLY: Universalis added the TC data centre 陸行鳥
+            // (worlds 4028-4035) some time after 2026-06-13, so a TC home world now resolves on its
+            // own and this warning is a fallback rather than the normal state. The override below
+            // stays as the escape hatch. Verified 2026-09-19 against the live /api/v2/worlds and
+            // /api/v2/data-centers, and against this client's own World sheet.
             if (plugin.ItemPriceLookup.WorldUnsupported && conf.UniversalisWorldIdOverride == 0) {
                 ImGui.TextColored(new Vector4(1f, 0.4f, 0.4f, 1f), "Your world is not tracked by Universalis.");
-                ImGui.TextWrapped("Set a world ID override below to view reference prices from that world.");
+                ImGui.TextWrapped("Set a world ID override below to view reference prices from another world.");
             }
 
             ImGui.SetNextItemWidth(120);
@@ -164,11 +169,12 @@ internal class ConfigUI(PriceInsightPlugin plugin) : IDisposable {
             }
             if (ImGui.IsItemHovered())
                 ImGui.SetTooltip(
-                    "TC/private server players: Universalis only tracks international worlds.\n" +
-                    "Enter an international world ID to use its prices as reference.\n" +
-                    "Common Japan world IDs: Carbuncle=40, Garuda=44, Tonberry=68, Aegis=22\n" +
-                    "Find all IDs at: https://universalis.app/api/v2/worlds\n" +
-                    "Set to 0 to use your own home world (default).");
+                    "Leave this at 0 to use your own home world — Universalis now tracks the TC\n" +
+                    "data centre 陸行鳥: 伊弗利特=4028, 迦樓羅=4029, 利維坦=4030, 鳳凰=4031,\n" +
+                    "奧汀=4032, 巴哈姆特=4033, 拉姆=4034, 泰坦=4035.\n" +
+                    "Set an override only to read another world's prices as a reference, or if your\n" +
+                    "own world ever stops being tracked. Japan examples: Carbuncle=40, Tonberry=68.\n" +
+                    "Full list: https://universalis.app/api/v2/worlds");
         }
 
         ImGui.End();

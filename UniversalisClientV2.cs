@@ -14,7 +14,23 @@ using Lumina.Excel.Sheets;
 namespace PriceInsight;
 
 public class UniversalisClientV2 : IDisposable {
-    private static readonly Dictionary<uint, string> Regions = new() { { 1, "Japan" }, { 2, "North-America" }, { 3, "Europe" }, { 4, "Oceania" } };
+    // porting-note(api13) MUST RE-APPLY: upstream only maps the four international regions, so every
+    // TC world resolved to "unknown" and the tooltip rendered e.g. "Average sale price (unknown):"
+    // whenever ShowAverageSalePriceIn / ShowDailySaleVelocityIn is set to Region.
+    //
+    // The added ids are read off this client's own WorldDCGroupType sheet (TC game data
+    // 2026.07.22.0000.0000), not guessed:
+    //   5 = the four CN data centres (陆行鸟 / 莫古力 / 猫小胖 / 豆豆柴, rows 101-104)
+    //   7 = NA Cloud DC (Beta) (row 13)
+    //   8 = 陸行鳥 (row 151) -- the TC data centre, worlds 4028-4035
+    // The names match what Universalis itself reports for those data centres at
+    // https://universalis.app/api/v2/data-centers ("中国", "NA-Cloud-DC", "繁中服"), so the label the
+    // tooltip prints is the same string the service uses. Region 6 (the "Eorzea" DC, row 201) is
+    // deliberately left out -- no second source names it, and it is not reachable from a TC client.
+    private static readonly Dictionary<uint, string> Regions = new() {
+        { 1, "Japan" }, { 2, "North-America" }, { 3, "Europe" }, { 4, "Oceania" },
+        { 5, "中国" }, { 7, "NA-Cloud-DC" }, { 8, "繁中服" },
+    };
     internal static readonly Dictionary<uint, (string Name, string DcName, string Region)> WorldLookup = Service.DataManager.GetExcelSheet<World>()!
         .ToDictionary(w => w.RowId, w => (w.Name.ExtractText(), w.DataCenter.Value.Name.ExtractText(), Regions.GetValueOrDefault((uint)w.DataCenter.Value.Region) ?? "unknown"));
 
